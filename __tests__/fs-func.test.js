@@ -1,5 +1,5 @@
 const fs = require('fs').promises;
-const { mkdirp, writeJSON } = require('../lib/fs-func');
+const { mkdirp, writeJSON, readJSON } = require('../lib/fs-func');
 
 describe('fs-functions', () => {
   beforeAll(() => {
@@ -7,7 +7,11 @@ describe('fs-functions', () => {
   });
 
   afterAll(() => {
-    return fs.rmdir('./test/test/', { recursive: true });
+    return fs.unlink('./test/test/test.txt');
+  });
+
+  afterAll(() => {
+    return fs.rmdir('./test/');
   });
 
   it('can write an object to a file', async() => {
@@ -17,5 +21,11 @@ describe('fs-functions', () => {
       .then(result => {
         expect(JSON.parse(result)).toEqual(dog);
       });
+  });
+
+  it('can read an object from a file', async() => {
+    const dog = { name: 'spot', age: 5 };
+    const data = await readJSON('./test/test/test.txt', 'utf8');
+    expect(data).toEqual(dog);
   });
 });
